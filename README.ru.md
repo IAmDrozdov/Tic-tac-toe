@@ -24,4 +24,5 @@
 * Using avatars
 * Blocking users
 
-Александр Дроздов
+# Автор
+[Александр Дроздов](mailto:aleksandr.drozdov.99@gmail.com)
