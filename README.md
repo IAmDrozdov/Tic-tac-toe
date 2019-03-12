@@ -27,3 +27,6 @@ In this project I propose to examine "the social network" for fans of all the fa
 # Author
 
 [Alexander Drozdov](mailto:aleksandr.drozdov.99@gmail.com)
+
+# Version
+0.0.1

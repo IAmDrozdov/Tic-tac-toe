@@ -26,3 +26,6 @@
 
 # Автор
 [Александр Дроздов](mailto:aleksandr.drozdov.99@gmail.com)
+
+# Версия
+0.0.1
