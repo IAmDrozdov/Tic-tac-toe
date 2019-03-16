@@ -1,3 +1,5 @@
 export default {
-  username: 'unknown'
+  header: {
+    username: 'unknown'
+  }
 };

@@ -1,31 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { setUsernameAction } from '../../actions/headerActions';
 import './Header.css';
 
 const propTypes = {
-  username: PropTypes.string
+  username: PropTypes.string.isRequired,
+  setUsername: PropTypes.func.isRequired
 };
-
-const defaultProps = {
-  username: 'if u c this mess, its mean that its not work'
-};
-const Header = ({ username }) => {
+const Header = ({ username, setUsername }) => {
   return (
     <div>
       {username}
+      <button
+        type='button'
+        onClick={() => setUsername(`${(new Date()).getMilliseconds()}`)}
+      >
+        set to lol
+      </button>
     </div>
   );
 };
 
 Header.propTypes = propTypes;
-Header.defaultProps = defaultProps;
 
-function mapStateToProps(state) {
-  return {
-    username: state.username
-  };
-}
+const mapStateToProps = state => ({
+  username: state.header.username
+});
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = (dispatch) => ({
+  setUsername: (username) => dispatch(setUsernameAction(username))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

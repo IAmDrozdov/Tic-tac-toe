@@ -1,6 +1,6 @@
 import * as types from '../constants/headerConstants';
 
-export const setUsername = (username) => ({
+export const setUsernameAction = (username) => ({
   type: types.SET_USERNAME,
   payload: username
 });
