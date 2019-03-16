@@ -23,9 +23,12 @@ In this project I propose to examine "the social network" for fans of all the fa
 * Using avatars
 * Blocking users
 
+## Using
+```
+npm start
+```
 
 # Author
-
 [Alexander Drozdov](mailto:aleksandr.drozdov.99@gmail.com)
 
 # Version

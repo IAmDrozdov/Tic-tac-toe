@@ -24,6 +24,12 @@
 * Using avatars
 * Blocking users
 
+## Запуск
+```
+npm start
+```
+
+
 # Автор
 [Александр Дроздов](mailto:aleksandr.drozdov.99@gmail.com)
 
