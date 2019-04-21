@@ -25,6 +25,8 @@
 * Blocking users
 
 ## Запуск
+Скопируйте .example.env to .env и заполните его своими данными для доступа
+
 ```
 npm start
 ```

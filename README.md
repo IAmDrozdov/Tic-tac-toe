@@ -24,6 +24,8 @@ In this project I propose to examine "the social network" for fans of all the fa
 * Blocking users
 
 ## Using
+
+copy .example.env to .env and fill it with your credentials
 ```
 npm start
 ```

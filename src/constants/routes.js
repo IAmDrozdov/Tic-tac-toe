@@ -1,0 +1,9 @@
+export const LANDING = '/';
+export const SIGN_UP = '/signup';
+export const SIGN_IN = '/signin';
+export const HOME = '/home';
+export const PASSWORD_FORGET = '/pw-forget';
+export const MATCH = '/match';
+export const USERS = '/users';
+export const USERS_DETAIL = '/users/:id';
+export const ACCOUNT = '/account';
