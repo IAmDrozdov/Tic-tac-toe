@@ -67,7 +67,6 @@ const mapDispatchToProps = dispatch => ({
 });
 const condition = authUser => !!authUser;
 
-
 export default compose(
   withEmailVerification,
   withAuthorization(condition),

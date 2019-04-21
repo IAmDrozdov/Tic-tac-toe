@@ -5,5 +5,5 @@ import withEmailVerification from './withEmailVerification';
 export {
   withAuthentication,
   withAuthorization,
-  withEmailVerification,
+  withEmailVerification
 };

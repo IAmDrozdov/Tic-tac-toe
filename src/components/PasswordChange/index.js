@@ -5,7 +5,7 @@ import { withFirebase } from '../Firebase';
 const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
-  error: null,
+  error: null
 };
 
 class PasswordChangeForm extends Component {
