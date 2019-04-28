@@ -23,7 +23,8 @@ class Firebase {
 
     this.googleProvider = new app.auth.GoogleAuthProvider();
     this.currentUid = this.auth.currentUser && this.auth.currentUser.uid;
-    this.currentName = this.auth.currentUser && this.auth.currentUser.displayName;
+    this.currentName = this.auth.currentUser &&
+      this.auth.currentUser.displayName;
   }
 
   doCreateUserWithEmailAndPassword = (email, password) =>

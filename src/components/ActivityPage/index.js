@@ -82,8 +82,9 @@ class ActivityPage extends Component {
     myActivityRef.doc(activity.id).delete();
     hisActivityRef.doc(activity.bindedActivity).delete();
     if (e.target.value === 'accept') {
-      console.log(activity)
-      this.props.firebase.db.collection('public').doc(activity.publicRef).delete()
+      this.props.firebase.db.collection('public')
+        .doc(activity.publicRef)
+        .delete();
     }
   };
 
