@@ -8,6 +8,8 @@ import SignInPage from '../SignIn';
 import PasswordForgetPage from '../PasswordForget';
 import HomePage from '../Home';
 import AccountPage from '../Account';
+import ActivityPage from '../ActivityPage';
+import PublicPage from '../Public';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
@@ -32,6 +34,8 @@ const App = () => (
       <Route exact path={ROUTES.USERS_DETAIL} component={UserItem} />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
+      <Route path={ROUTES.ACTIVITY} component={ActivityPage} />
+      <Route path={ROUTES.PUBLIC} component={PublicPage} />
     </div>
   </Router>
 );

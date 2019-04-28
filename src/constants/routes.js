@@ -7,3 +7,5 @@ export const MATCH = '/match';
 export const USERS = '/users';
 export const USERS_DETAIL = '/users/:id';
 export const ACCOUNT = '/account';
+export const ACTIVITY = '/activity';
+export const PUBLIC = '/public';

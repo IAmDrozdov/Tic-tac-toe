@@ -1,11 +1,12 @@
 import app from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/database';
+import 'firebase/firestore';
 
 const config = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
   authDomain: process.env.REACT_APP_FB_AUTH_DOMAIN,
-  databaseURL: process.env.REACT_APP_FB_DATABASE_URL,
+  // databaseURL: process.env.REACT_APP_FB_DATABASE_URL,
+  databaseURL: 'default',
   projectId: process.env.REACT_APP_FB_PROJECT_ID,
   storageBucket: process.env.REACT_APP_FB_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_FB_MESSAGING_SENDER_ID
@@ -15,14 +16,14 @@ class Firebase {
   constructor() {
     app.initializeApp(config);
 
-    this.serverValue = app.database.ServerValue;
     this.emailAuthProvider = app.auth.EmailAuthProvider;
 
     this.auth = app.auth();
-    this.db = app.database();
+    this.db = app.firestore();
 
     this.googleProvider = new app.auth.GoogleAuthProvider();
-
+    this.currentUid = this.auth.currentUser && this.auth.currentUser.uid;
+    this.currentName = this.auth.currentUser && this.auth.currentUser.displayName;
   }
 
   doCreateUserWithEmailAndPassword = (email, password) =>
@@ -51,14 +52,9 @@ class Firebase {
     this.auth.onAuthStateChanged(authUser => {
       if (authUser) {
         this.user(authUser.uid)
-          .once('value')
-          .then(snapshot => {
-            const dbUser = snapshot.val();
-
-            // default empty roles
-            if (!dbUser.roles) {
-              dbUser.roles = {};
-            }
+          .get()
+          .then(doc => {
+            const dbUser = doc.data();
 
             // merge auth and db user
             const mergedAuthUser = {
@@ -76,9 +72,10 @@ class Firebase {
       }
     });
 
-  user = uid => this.db.ref(`users/${uid}`);
+  user = uid => this.db.collection('users').doc(uid);
 
-  users = () => this.db.ref('users');
+  users = () => this.db.collection('users');
+
 }
 
 export default Firebase;

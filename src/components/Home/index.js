@@ -8,8 +8,13 @@ import { withAuthorization, withEmailVerification } from '../Session';
 const HomePage = () => (
   <div>
     <h1>Home Page</h1>
-    <p>The Home Page is accessible by every signed in user.</p>
-    <Link to={ROUTES.USERS}>Users</Link>
+    <li>
+      <Link to={ROUTES.USERS}>Users</Link>
+    </li>
+    <li>
+      <Link to={ROUTES.PUBLIC}>Public</Link>
+    </li>
+
   </div>
 );
 
