@@ -7,12 +7,12 @@ import * as ROUTES from '../../constants/routes';
 
 const Navigation = ({ authUser }) =>
   authUser ? (
-    <NavigationAuth />
+    <NavigationAuth user={authUser} />
   ) : (
     <NavigationNonAuth />
   );
 
-const NavigationAuth = () => (
+const NavigationAuth = (authUser) => (
   <ul>
     <li>
       <Link to={ROUTES.LANDING}>Landing</Link>
@@ -28,6 +28,9 @@ const NavigationAuth = () => (
     </li>
     <li>
       <SignOutButton />
+    </li>
+    <li>
+      {authUser.user.username} {authUser.user.online && "(online)"}
     </li>
   </ul>
 );

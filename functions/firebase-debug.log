@@ -1,0 +1,26 @@
+[debug] [2019-05-01T18:06:48.937Z] ----------------------------------------------------------------------
+[debug] [2019-05-01T18:06:48.939Z] Command:       /usr/local/bin/node /Users/celadon/uni/tic-tac-toe/node_modules/.bin/firebase functions:shell
+[debug] [2019-05-01T18:06:48.939Z] CLI Version:   6.7.2
+[debug] [2019-05-01T18:06:48.939Z] Platform:      darwin
+[debug] [2019-05-01T18:06:48.939Z] Node Version:  v10.15.0
+[debug] [2019-05-01T18:06:48.940Z] Time:          Wed May 01 2019 21:06:48 GMT+0300 (Moscow Standard Time)
+[debug] [2019-05-01T18:06:48.940Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-05-01T18:06:48.952Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-05-01T18:06:48.952Z] > authorizing via signed-in user
+[debug] [2019-05-01T18:06:48.953Z] [iam] checking project tic-tac-toe-c275d for permissions ["firebase.projects.get"]
+[debug] [2019-05-01T18:06:48.954Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/tic-tac-toe-c275d:testIamPermissions  
+
+[debug] [2019-05-01T18:06:49.968Z] <<< HTTP RESPONSE 200
+[info] i  functions: Preparing to emulate functions.
+[debug] [2019-05-01T18:06:50.899Z] Fetching environment
+[debug] [2019-05-01T18:06:50.901Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/tic-tac-toe-c275d  
+ 
+[debug] [2019-05-01T18:06:51.876Z] <<< HTTP RESPONSE 200
+[debug] [2019-05-01T18:06:51.877Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/953499401119:getServerAppConfig  
+ 
+[debug] [2019-05-01T18:06:52.326Z] <<< HTTP RESPONSE 200
+[debug] [2019-05-01T18:06:52.326Z] Starting @google-cloud/functions-emulator
+[debug] [2019-05-01T18:06:53.908Z] Parsing function triggers
+[debug] [2019-05-01T18:06:54.148Z] Deploying functions locally
+[info] ✔  functions: onUserStatusChanged

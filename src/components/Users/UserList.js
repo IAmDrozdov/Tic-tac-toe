@@ -12,7 +12,9 @@ class UserList extends Component {
     super(props);
 
     this.state = {
-      loading: false
+      loading: false,
+      onlineSort: 'all',
+      users: []
     };
   }
 
@@ -33,7 +35,10 @@ class UserList extends Component {
       })
       .then((users) => {
         this.props.onSetUsers(users);
-        this.setState({ loading: false });
+        this.setState({
+          loading: false,
+          users: this.props.users.filter(u => u.uid !== this.props.authUser.uid)
+        });
       });
   }
 
@@ -68,20 +73,39 @@ class UserList extends Component {
     }
   };
 
+  handleSelectChange = (e) => {
+    const sorting = e.target.value;
+    let users = this.props.users.filter(u => u.uid !== this.props.authUser.uid);
+    switch (sorting) {
+      case 'online':
+        users = users.filter(u => u.online);
+        break;
+      case 'offline':
+        users = users.filter(u => !u.online);
+        break;
+      default:
+        break;
+    }
+    this.setState({ onlineSort: sorting, users });
+  };
+
   render() {
-    const { users } = this.props;
-    const { loading } = this.state;
-    const me = this.props.authUser.uid;
-    const usersWithoutMe = users.filter(u => u.uid !== me);
+    const { loading, onlineSort, users } = this.state;
     return (
       <div>
         <h2>Users</h2>
         {loading && <div>Loading ...</div>}
+        <select value={onlineSort} onChange={this.handleSelectChange}>
+          <option value="all">all</option>
+          <option value="online">online</option>
+          <option value="offline">offline</option>
+        </select>
         <ul>
-          {usersWithoutMe.map(user => (
+          {users.map(user => (
             <li key={user.uid}>
               <Link to={`${ROUTES.USERS}/${user.uid}`}>
                 <strong>{user.username}</strong>
+                <strong>{user.online && '(online)'}</strong>
               </Link>
               <input type="button" onClick={() => this.askMatch(user)}
                      value="Ask match" />
