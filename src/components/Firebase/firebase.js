@@ -82,6 +82,10 @@ class Firebase {
 
   users = () => this.db.collection('users');
 
+  match = id => this.db.collection('matches').doc(id);
+
+  activity = id => this.user(id).collection('activity');
+
 }
 
 export default Firebase;

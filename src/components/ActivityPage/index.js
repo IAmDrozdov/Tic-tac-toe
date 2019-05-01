@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import ActivityItemTracked from './ActivityItem';
 
 import { withAuthorization, withEmailVerification } from '../Session';
 
@@ -10,13 +11,14 @@ class ActivityPage extends Component {
 
     this.state = {
       activities: [],
-      activityListener: null
+      activityListener: null,
+      viewedActivities: []
     };
   }
 
   componentDidMount() {
-    const activityListener = this.props.firebase.user(this.props.authUser.uid)
-      .collection('activity')
+    const activityListener = this.props.firebase.activity(
+      this.props.authUser.uid)
       .orderBy('date', 'asc')
       .onSnapshot(snapshot => {
         const activities = this.state.activities.slice();
@@ -40,17 +42,23 @@ class ActivityPage extends Component {
   }
 
   componentWillUnmount() {
+    const batch = this.props.firebase.db.batch();
+    for (let i = 0; i < this.state.viewedActivities.length; i = i + 1) {
+      const activityRef = this.props.firebase.activity(this.props.authUser.uid)
+        .doc(this.state.viewedActivities[i]);
+      batch.update(activityRef, { viewed: true });
+    }
+    batch.commit();
     this.state.activityListener && this.state.activityListener();
   }
 
   respond = (e, activity) => {
-    const hisActivityRef = this.props.firebase.user(activity.uid)
-      .collection('activity');
-    const myActivityRef = this.props.firebase.user(
-      this.props.authUser.uid)
-      .collection('activity');
+    const hisActivityRef = this.props.firebase.activity(activity.uid);
+    const myActivityRef = this.props.firebase.activity(
+      this.props.authUser.uid);
     const responseRef = hisActivityRef.doc();
     const response = {
+      viewed: false,
       date: new Date(),
       id: responseRef.id,
       type: 'response',
@@ -64,13 +72,12 @@ class ActivityPage extends Component {
   };
 
   respondPublic = (e, activity) => {
-    const hisActivityRef = this.props.firebase.user(activity.uid)
-      .collection('activity');
-    const myActivityRef = this.props.firebase.user(
-      this.props.authUser.uid)
-      .collection('activity');
+    const hisActivityRef = this.props.firebase.activity(activity.uid);
+    const myActivityRef = this.props.firebase.activity(
+      this.props.authUser.uid);
     const responseRef = hisActivityRef.doc();
     const response = {
+      viewed: false,
       date: new Date(),
       id: responseRef.id,
       type: 'response',
@@ -88,58 +95,29 @@ class ActivityPage extends Component {
     }
   };
 
+  whenVisible = (id) => {
+    this.setState(
+      prevState => ({ viewedActivities: [...prevState.viewedActivities, id] }));
+  };
+
   render = () => {
     const { activities, loading } = this.state;
     return (
       <div>
         <h1>Activities</h1>
         {loading && <div>Loading ...</div>}
-        {
-          activities.map(a => {
-            switch (a.type) {
-              case 'request':
-                return (
-                  (
-                    <li key={a.id}>
-                      {`${a.name} want to play with  you`}
-                      <input type="button" value='decline'
-                             onClick={(e) => {
-                               return this.respond(e, a);
-                             }} />
-                      <input type="button" value='accept'
-                             onClick={(e) => this.respond(e, a)} />
-                    </li>
-                  )
-                );
-              case 'p-request':
-                return (
-                  (
-                    <li key={a.id}>
-                      {`${a.name} want to play with  you`}
-                      <input type="button" value='decline'
-                             onClick={(e) => {
-                               return this.respondPublic(e, a);
-                             }} />
-                      <input type="button" value='accept'
-                             onClick={(e) => this.respondPublic(e, a)} />
-                    </li>
-                  )
-                );
-              case 'response':
-                return (
-                  <li key={a.id}>
-                    {a.message}
-                  </li>
-                );
-              default:
-                return (
-                  <li key={a.id}>
-                    {a.message} {'other'}
-                  </li>
-                );
-            }
-          })
-        }
+        <ul>
+          {
+            activities.map(a => (
+              <ActivityItemTracked key={a.id}
+                                   activity={a}
+                                   respond={this.respond}
+                                   respondPublic={this.respondPublic}
+                                   whenVisible={this.whenVisible}
+              />
+            ))
+          }
+        </ul>
       </div>
     );
   };

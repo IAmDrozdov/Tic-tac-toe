@@ -15,6 +15,7 @@ import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
 import { UserList } from '../Users';
 import UserItem from '../Users/UserItem';
+import MatchPage from '../Match';
 
 const App = () => (
   <Router>
@@ -31,7 +32,8 @@ const App = () => (
         component={PasswordForgetPage}
       />
       <Route exact path={ROUTES.USERS} component={UserList} />
-      <Route exact path={ROUTES.USERS_DETAIL} component={UserItem} />
+      <Route exact path={`${ROUTES.USERS}/:id`} component={UserItem} />
+      <Route exact path={`${ROUTES.MATCH}/:id`} component={MatchPage} />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route path={ROUTES.ACTIVITY} component={ActivityPage} />

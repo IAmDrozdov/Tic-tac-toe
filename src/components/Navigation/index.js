@@ -12,28 +12,41 @@ const Navigation = ({ authUser }) =>
     <NavigationNonAuth />
   );
 
-const NavigationAuth = (authUser) => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.HOME}>Home</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACTIVITY}>Activity</Link>
-    </li>
-    <li>
-      <SignOutButton />
-    </li>
-    <li>
-      {authUser.user.username} {authUser.user.online && "(online)"}
-    </li>
-  </ul>
-);
+const NavigationAuth = ({ user }) => {
+  const activityCounter = 0;
+  // firebase.user(user.uid)
+  //   .collection('activity')
+  //   .onSnapshot(snapshot => {activityCounter = snapshot.size;});
+
+  return (
+    <ul>
+      <li>
+        <Link to={ROUTES.LANDING}>Landing</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.HOME}>Home</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.ACCOUNT}>Account</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.ACTIVITY}>Activity {activityCounter > 0 &&
+        `(${activityCounter})`}</Link>
+      </li>
+      {user.match &&
+      <li>
+        <Link to={`${ROUTES.MATCH}/${user.match}`}>Current match</Link>
+      </li>}
+      <li>
+        {user.username} {user.online && '(online)'}
+      </li>
+      <li>
+        <SignOutButton />
+      </li>
+    </ul>
+  );
+
+};
 
 const NavigationNonAuth = () => (
   <ul>
