@@ -13,8 +13,7 @@ import PublicPage from '../Public';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
-import { UserList } from '../Users';
-import UserItem from '../Users/UserItem';
+import { UserList, UserPage } from '../Users';
 import MatchPage from '../Match';
 
 const App = () => (
@@ -32,7 +31,7 @@ const App = () => (
         component={PasswordForgetPage}
       />
       <Route exact path={ROUTES.USERS} component={UserList} />
-      <Route exact path={`${ROUTES.USERS}/:id`} component={UserItem} />
+      <Route exact path={`${ROUTES.USERS}/:id`} component={UserPage} />
       <Route exact path={`${ROUTES.MATCH}/:id`} component={MatchPage} />
       <Route path={ROUTES.HOME} component={HomePage} />
       <Route path={ROUTES.ACCOUNT} component={AccountPage} />

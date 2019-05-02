@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import * as ROUTES from '../../constants/routes';
-
+import UserItem from './UserItem';
 import { withFirebase } from '../Firebase';
 import { withAuthorization, withEmailVerification } from '../Session';
 
@@ -14,32 +11,29 @@ class UserList extends Component {
     this.state = {
       loading: false,
       onlineSort: 'all',
-      users: []
+      users: [],
+      usersToDisplay: []
     };
   }
 
-  componentDidMount() {
-    if (!this.props.users.length) {
+  async componentDidMount() {
+    if (!this.state.users.length) {
       this.setState({ loading: true });
     }
-    this.props.firebase
+    const snapshot = await this.props.firebase
       .users()
-      .get()
-      .then(snapshot => {
-        const users = {};
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          users[data.uid] = data;
-        });
-        return users;
-      })
-      .then((users) => {
-        this.props.onSetUsers(users);
-        this.setState({
-          loading: false,
-          users: this.props.users.filter(u => u.uid !== this.props.authUser.uid)
-        });
-      });
+      .get();
+    let users = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      users.push(data);
+    });
+    users = users.filter(u => u.uid !== this.props.authUser.uid);
+    this.setState({
+      loading: false,
+      users,
+      usersToDisplay: users
+    });
   }
 
   askMatch = async (user) => {
@@ -75,41 +69,35 @@ class UserList extends Component {
 
   handleSelectChange = (e) => {
     const sorting = e.target.value;
-    let users = this.props.users.filter(u => u.uid !== this.props.authUser.uid);
+    let usersToDisplay = this.state.users.filter(
+      u => u.uid !== this.props.authUser.uid);
     switch (sorting) {
       case 'online':
-        users = users.filter(u => u.online);
+        usersToDisplay = usersToDisplay.filter(u => u.online);
         break;
       case 'offline':
-        users = users.filter(u => !u.online);
+        usersToDisplay = usersToDisplay.filter(u => !u.online);
         break;
       default:
         break;
     }
-    this.setState({ onlineSort: sorting, users });
+    this.setState({ onlineSort: sorting, usersToDisplay });
   };
 
   render() {
-    const { loading, onlineSort, users } = this.state;
+    const { loading, onlineSort, usersToDisplay } = this.state;
     return (
       <div>
         <h2>Users</h2>
-        {loading && <div>Loading ...</div>}
+        {loading && <div>Loading users</div>}
         <select value={onlineSort} onChange={this.handleSelectChange}>
           <option value="all">all</option>
           <option value="online">online</option>
           <option value="offline">offline</option>
         </select>
         <ul>
-          {users.map(user => (
-            <li key={user.uid}>
-              <Link to={`${ROUTES.USERS}/${user.uid}`}>
-                <strong>{user.username}</strong>
-                <strong>{user.online && '(online)'}</strong>
-              </Link>
-              <input type="button" onClick={() => this.askMatch(user)}
-                     value="Ask match" />
-            </li>
+          {usersToDisplay.map(user => (
+            <UserItem user={user} askMatch={this.askMatch} key={user.uid}/>
           ))}
         </ul>
       </div>
@@ -117,25 +105,10 @@ class UserList extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  users: Object.keys(state.userState.users || {}).map(key => ({
-    ...state.userState.users[key],
-    uid: key
-  })),
-  authUser: state.sessionState.authUser
-});
-
-const mapDispatchToProps = dispatch => ({
-  onSetUsers: users => dispatch({ type: 'USERS_SET', users })
-});
-const condition = authUser => !!authUser;
+const
+  condition = authUser => !!authUser;
 
 export default compose(
   withEmailVerification,
   withAuthorization(condition),
-  withFirebase,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
-)(UserList);
+  withFirebase)(UserList);
