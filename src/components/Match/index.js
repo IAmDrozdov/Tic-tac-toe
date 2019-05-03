@@ -2,17 +2,8 @@ import React, { Component } from 'react';
 import { compose } from 'recompose';
 import Cell from './Cell';
 import { withAuthorization, withEmailVerification } from '../Session';
+import * as MATCH_CONSTANTS from '../../constants/match';
 
-const WIN_COMBINATIONS = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 4, 8],
-  [2, 4, 6],
-  [0, 3, 6],
-  [1, 4, 7],
-  [6, 7, 8]
-];
 
 class MatchPage extends Component {
   constructor(props) {
@@ -65,11 +56,11 @@ class MatchPage extends Component {
   };
 
   checkCombinations = (field) => {
-    const xs = field.filter(c => c.value === 'X').map(c => c.index);
-    const os = field.filter(c => c.value === 'O').map(c => c.index);
-    for (let i = 0; i < WIN_COMBINATIONS.length; i += 1) {
-      if (WIN_COMBINATIONS[i].every(e => xs.includes(e))) return 'X';
-      if (WIN_COMBINATIONS[i].every(e => os.includes(e))) return 'O';
+    const xs = field.filter(c => c.value === MATCH_CONSTANTS.CROSS).map(c => c.index);
+    const os = field.filter(c => c.value === MATCH_CONSTANTS.ZERO).map(c => c.index);
+    for (let i = 0; i < MATCH_CONSTANTS.WIN_COMBINATIONS.length; i += 1) {
+      if (MATCH_CONSTANTS.WIN_COMBINATIONS[i].every(e => xs.includes(e))) return MATCH_CONSTANTS.CROSS;
+      if (MATCH_CONSTANTS.WIN_COMBINATIONS[i].every(e => os.includes(e))) return MATCH_CONSTANTS.ZERO;
     }
     return null;
   };
@@ -79,13 +70,13 @@ class MatchPage extends Component {
       .get()
       .then(doc => {
         const { field, turn, userX, userO } = doc.data();
-        field[idx].value = turn === userX ? 'X' : 'O';
+        field[idx].value = turn === userX ? MATCH_CONSTANTS.CROSS : MATCH_CONSTANTS.ZERO;
         let win = this.checkCombinations(field);
         switch (win) {
-          case 'X':
+          case MATCH_CONSTANTS.CROSS:
             win = userX;
             break;
-          case 'O':
+          case MATCH_CONSTANTS.ZERO:
             win = userO;
             break;
           default:
@@ -102,7 +93,7 @@ class MatchPage extends Component {
     return (
       <div>
         <h1>MatchPage {id}</h1>
-        {userX && <h2>You are playing {authUser.uid === userX ? 'X' : 'O'}</h2>}
+        {userX && <h2>You are playing {authUser.uid === userX ? MATCH_CONSTANTS.CROSS : MATCH_CONSTANTS.ZERO}</h2>}
         <div style={{
           width: '50%',
           display: 'grid',

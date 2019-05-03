@@ -1,4 +1,5 @@
 import React from 'react';
+import * as MATCH_CONSTANTS from '../../constants/match';
 
 const Cell = (props) => {
   return (
@@ -13,7 +14,7 @@ const Cell = (props) => {
              style={{
                width: '100%',
                height: '100%',
-               background: props.cell.value ? props.cell.value === 'X'
+               background: props.cell.value ? props.cell.value === MATCH_CONSTANTS.CROSS
                  ? 'red'
                  : 'green' : 'white'
              }}
