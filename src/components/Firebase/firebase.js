@@ -62,7 +62,6 @@ class Firebase {
           .then(doc => {
             const dbUser = doc.data();
 
-            // merge auth and db user
             const mergedAuthUser = {
               uid: authUser.uid,
               email: authUser.email,
@@ -85,6 +84,8 @@ class Firebase {
   match = id => this.db.collection('matches').doc(id);
 
   activity = id => this.user(id).collection('activity');
+
+  public = id => this.db.collection('public').doc(id);
 
 }
 

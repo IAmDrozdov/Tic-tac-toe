@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import * as ROUTES from '../../constants/routes';
-
+import PublicItem from './PublicItem';
+import { generateMatchId } from '../../utils';
 import { withAuthorization, withEmailVerification } from '../Session';
+import * as ROUTES from '../../constants/routes';
 
 class PublicPage extends Component {
   constructor(props) {
@@ -44,41 +44,63 @@ class PublicPage extends Component {
   };
 
   deleteRequest = () => {
-    this.props.firebase.db.collection('public')
-      .doc(this.state.myRequest)
+    this.props.firebase.public(this.state.myRequest)
       .delete();
 
   };
 
-  respond = async (m) => {
-    const hisActivityRef = this.props.firebase.user(m.uid)
+  respond = async (match) => {
+    const hisRef = this.props.firebase.user(match.uid);
+    const myRef = this.props.firebase.user(this.props.authUser.uid);
+    const hisActivityRef = this.props.firebase.user(match.uid)
       .collection('activity');
-    const myActivityRef = this.props.firebase.user(this.props.authUser.uid)
-      .collection('activity');
-    const snapshot = await hisActivityRef.get();
-    let meIn = false;
-    snapshot.forEach(doc => {
-      if (doc.data().uid ===
-        this.props.authUser.uid) meIn = true;
-    });
-    if (!meIn) {
-      const newActivityRef = myActivityRef.doc();
-      newActivityRef.set({
-        date: new Date(),
-        uid: this.props.authUser.uid,
-        id: newActivityRef.id,
-        message: `Your request to ${m.username} is pending`
-      });
-      const requestRef = hisActivityRef.doc();
-      requestRef.set({
-        date: new Date(),
-        uid: this.props.authUser.uid,
-        name: this.props.authUser.username,
-        type: 'p-request',
-        id: requestRef.id,
-        bindedActivity: newActivityRef.id,
-        publicRef: m.id
-      });
+
+    const myDoc = await myRef.get();
+    const hisDoc = await hisRef.get();
+
+    const myInfo = myDoc.data();
+    const hisInfo = hisDoc.data();
+
+    if (hisInfo.online && !hisInfo.match) {
+      if (myInfo.match) {
+        alert('You are already playing');
+      } else {
+        const matchId = generateMatchId(myInfo.uid, hisInfo.uid);
+        const field = [];
+        const users = [myInfo.uid, hisInfo.uid];
+
+        for (let i = 0; i < 9; i += 1) field.push(
+          { value: null });
+        field.forEach((c, i) => c.index = i);
+        const userX = users[Math.floor(Math.random() * users.length)];
+        const userO = users.filter(u => u !== userX).pop();
+
+        await this.props.firebase
+          .match(matchId)
+          .set({
+            field,
+            turn: userX,
+            userX,
+            userO,
+            win: null
+          });
+
+        const requestRef = hisActivityRef.doc();
+        await requestRef.set({
+          date: new Date(),
+          uid: myInfo.uid,
+          name: myInfo.username,
+          type: 'match',
+          id: requestRef.id,
+          matchId
+        });
+        await myRef.update({ match: matchId });
+        await hisRef.update({ match: matchId });
+        this.props.firebase.public(match.id).delete();
+        this.props.history.push(`${ROUTES.MATCH}/${matchId}`);
+      }
+    } else {
+      alert('You are already playing');
     }
   };
 
@@ -96,23 +118,13 @@ class PublicPage extends Component {
             <input type="button" value='Publish request to play'
                    onClick={this.publishRequest} />
         }
-        {matches.map(m => (
-          <li key={m.id}>
-            {
-              m.uid !== authUser.uid ?
-                <Link to={`${ROUTES.USERS}/${m.uid}`}>{m.name}</Link>
-                :
-                'your request'
-            }
-
-            {m.uid !== authUser.uid &&
-            <input type="button" value='respond'
-                   onClick={() => {
-                     return this.respond(m);
-                   }} />
-            }
-          </li>
-        ))}
+        {matches.map(match => (
+            <PublicItem key={match.id}
+                        match={match}
+                        uid={authUser.uid}
+                        respond={this.respond} />
+          )
+        )}
       </div>
     );
   }

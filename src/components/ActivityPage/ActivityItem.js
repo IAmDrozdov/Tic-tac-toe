@@ -1,5 +1,7 @@
 import React from 'react';
 import TrackVisibility from 'react-on-screen';
+import { Link } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes';
 
 const ActivityItem = (props) => {
   const { activity, respond, respondPublic, isVisible, whenVisible } = props;
@@ -41,6 +43,16 @@ const ActivityItem = (props) => {
           <span style={{
             fontWeight: !activity.viewed && 'bold'
           }}>{activity.message}</span>
+        </li>
+      );
+    case 'match':
+      return (
+        <li>
+          <span style={{
+            fontWeight: !activity.viewed && 'bold'
+          }}>{activity.message}</span>
+          <Link to={`${ROUTES.MATCH}/${activity.matchId}`}>Go to match
+            with {activity.name}</Link>
         </li>
       );
     default:
