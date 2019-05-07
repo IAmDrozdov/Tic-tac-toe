@@ -5,19 +5,16 @@ import { connect } from 'react-redux';
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
 
-const Navigation = ({ authUser }) =>
+const Navigation = ({ authUser, unreadActivities, currentMatch }) =>
   authUser ? (
-    <NavigationAuth user={authUser} />
+    <NavigationAuth user={authUser}
+                    unreadActivities={unreadActivities}
+                    currentMatch={currentMatch} />
   ) : (
     <NavigationNonAuth />
   );
 
-const NavigationAuth = ({ user }) => {
-  const activityCounter = 0;
-  // firebase.user(user.uid)
-  //   .collection('activity')
-  //   .onSnapshot(snapshot => {activityCounter = snapshot.size;});
-
+const NavigationAuth = ({ user, unreadActivities, currentMatch }) => {
   return (
     <ul>
       <li>
@@ -27,25 +24,22 @@ const NavigationAuth = ({ user }) => {
         <Link to={ROUTES.HOME}>Home</Link>
       </li>
       <li>
-        <Link to={ROUTES.ACCOUNT}>Account</Link>
+        <Link to={ROUTES.ACTIVITY}>Activity {unreadActivities.length > 0 &&
+        `(${unreadActivities.length})`}</Link>
       </li>
+      {currentMatch &&
       <li>
-        <Link to={ROUTES.ACTIVITY}>Activity {activityCounter > 0 &&
-        `(${activityCounter})`}</Link>
-      </li>
-      {user.match &&
-      <li>
-        <Link to={`${ROUTES.MATCH}/${user.match}`}>Current match</Link>
+        <Link to={`${ROUTES.MATCH}/${currentMatch}`}>Current match</Link>
       </li>}
       <li>
-        {user.username} {user.online && '(online)'}
+        <Link to={ROUTES.ACCOUNT}>{user.username} {user.online &&
+        '(online)'}</Link>
       </li>
       <li>
         <SignOutButton />
       </li>
     </ul>
   );
-
 };
 
 const NavigationNonAuth = () => (
@@ -64,7 +58,9 @@ const NavigationNonAuth = () => (
 );
 
 const mapStateToProps = state => ({
-  authUser: state.sessionState.authUser
+  authUser: state.sessionState.authUser,
+  currentMatch: state.sessionState.currentMatch,
+  unreadActivities: state.activityState.unread
 });
 
 export default connect(mapStateToProps)(Navigation);

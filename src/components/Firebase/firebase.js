@@ -2,6 +2,7 @@ import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/database';
+import 'firebase/storage';
 
 const config = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -21,7 +22,10 @@ class Firebase {
     this.auth = app.auth();
     this.db = app.firestore();
     this.oldDb = app.database();
+    this.storage = app.storage();
+    this.storageRef = this.storage.ref();
     this.googleProvider = new app.auth.GoogleAuthProvider();
+
   }
 
   doCreateUserWithEmailAndPassword = (email, password) =>
@@ -49,19 +53,11 @@ class Firebase {
   onAuthUserListener = (next, fallback) =>
     this.auth.onAuthStateChanged(authUser => {
       if (authUser) {
-        this.user(authUser.uid).update({ online: true });
-        this.oldDb
-          .ref(`status/${authUser.uid}`)
-          .set({ online: true });
-        this.oldDb
-          .ref(`status/${authUser.uid}`)
-          .onDisconnect()
-          .set({ online: false });
+        this.trackOnlineStatus(authUser.uid);
         this.user(authUser.uid)
           .get()
           .then(doc => {
             const dbUser = doc.data();
-
             const mergedAuthUser = {
               uid: authUser.uid,
               email: authUser.email,
@@ -77,6 +73,17 @@ class Firebase {
       }
     });
 
+  trackOnlineStatus = (uid) => {
+    this.user(uid).update({ online: true });
+    this.oldDb
+      .ref(`status/${uid}`)
+      .set({ online: true });
+    this.oldDb
+      .ref(`status/${uid}`)
+      .onDisconnect()
+      .set({ online: false });
+  };
+
   user = uid => this.db.collection('users').doc(uid);
 
   users = () => this.db.collection('users');
@@ -87,6 +94,18 @@ class Firebase {
 
   public = id => this.db.collection('public').doc(id);
 
+  uploadAvatar = async (id, file) => {
+    const imgRef = this.storageRef.child(id);
+    await imgRef.put(file, {
+      contentType: 'image/jpeg'
+    });
+    const imgUrl = await imgRef.getDownloadURL();
+    return imgUrl;
+  };
+
+  getAvatar = id => {
+
+  };
 }
 
 export default Firebase;

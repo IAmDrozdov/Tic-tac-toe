@@ -6,7 +6,7 @@ import * as ROUTES from '../../constants/routes';
 const ActivityItem = (props) => {
   const { activity, respond, respondPublic, isVisible, whenVisible } = props;
 
-  // if (isVisible && !activity.viewed) whenVisible(activity.id);
+  if (isVisible && !activity.viewed) whenVisible(activity.id);
 
   switch (activity.type) {
     case 'request':

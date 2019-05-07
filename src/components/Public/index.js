@@ -54,7 +54,11 @@ class PublicPage extends Component {
     const myRef = this.props.firebase.user(this.props.authUser.uid);
     const hisActivityRef = this.props.firebase.user(match.uid)
       .collection('activity');
-
+    const hisBlackListWithMe = await hisRef.collection('blacklist').where('uid', '==', this.props.authUser.uid).get();
+    if (!hisBlackListWithMe.empty) {
+      alert('User blocked you');
+      return
+    }
     const myDoc = await myRef.get();
     const hisDoc = await hisRef.get();
 
@@ -100,7 +104,7 @@ class PublicPage extends Component {
         this.props.history.push(`${ROUTES.MATCH}/${matchId}`);
       }
     } else {
-      alert('You are already playing');
+      alert('Enemy is not ready to play');
     }
   };
 

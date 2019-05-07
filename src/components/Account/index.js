@@ -6,6 +6,7 @@ import { withAuthorization, withEmailVerification } from '../Session';
 import { withFirebase } from '../Firebase';
 import { PasswordForgetForm } from '../PasswordForget';
 import PasswordChangeForm from '../PasswordChange';
+import { DEFAULT_AVATAR } from '../../constants/user';
 
 const SIGN_IN_METHODS = [
   {
@@ -18,12 +19,56 @@ const SIGN_IN_METHODS = [
   }
 ];
 
+
+
 const AccountPage = ({ authUser }) => (
   <div>
     <h1>Account: {authUser.email}</h1>
+    <img style={{height: '200px', width: '200px'}} src={authUser.avatarUrl ? authUser.avatarUrl : DEFAULT_AVATAR}/>
+    <Statistics
+      loses={authUser.losesCount}
+      matches={authUser.matchesCount}
+      wins={authUser.winsCount} />
+    <AvatarChangeForm  authUser={authUser}/>
     <PasswordForgetForm />
     <PasswordChangeForm />
     <LoginManagement authUser={authUser} />
+  </div>
+);
+
+class AvatarChangeFormBase extends Component {
+  constructor(props) {
+    super(props);
+    this.setRef = ref => {
+      this.file = ref;
+    };
+  };
+
+  submit = async (e) => {
+    e.preventDefault();
+    const file = this.file.files[0];
+    const imgUrl = await this.props.firebase.uploadAvatar(this.props.authUser.uid, file);
+    await this.props.firebase.user(this.props.authUser.uid).update({avatarUrl: imgUrl})
+  };
+
+  render() {
+    return (
+      <div>
+        <form onSubmit={this.submit}>
+          <input type="file" ref={this.setRef} />
+          <input type="submit" />
+        </form>
+      </div>
+
+    );
+  }
+}
+
+const Statistics = ({ matches, wins, loses }) => (
+  <div>
+    <span>Matches: {matches || 0} </span>
+    <span>Loses: {loses || 0} </span>
+    <span>Wins: {wins || 0}</span>
   </div>
 );
 
@@ -208,6 +253,7 @@ class DefaultLoginToggle extends Component {
 
 const LoginManagement = withFirebase(LoginManagementBase);
 
+const AvatarChangeForm = withFirebase(AvatarChangeFormBase)
 const mapStateToProps = state => ({
   authUser: state.sessionState.authUser
 });

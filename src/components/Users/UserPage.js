@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
+import { DEFAULT_AVATAR } from '../../constants/user';
 
 import { withFirebase } from '../Firebase';
 import { withAuthorization, withEmailVerification } from '../Session';
@@ -10,7 +12,8 @@ class UserPage extends Component {
 
     this.state = {
       loading: false,
-      user: null
+      user: null,
+      blocked: false
     };
   }
 
@@ -22,12 +25,37 @@ class UserPage extends Component {
       .user(this.props.match.params.id)
       .get();
     const user = userDoc.data();
-
+    const blackList = await this.props.firebase
+      .user(this.props.authUser.uid)
+      .collection('blacklist')
+      .get();
+    blackList.docs.forEach(qds => {
+      if (qds.data().uid === user.uid) this.setState({ blocked: true });
+    });
     this.setState({ loading: false, user });
   }
 
+  blockUser = async () => {
+    const { empty, docs } = await this.props.firebase.user(
+      this.props.authUser.uid)
+      .collection('blacklist')
+      .where('uid', '==', this.state.user.uid)
+      .get();
+    if (empty) {
+      this.props.firebase.user(this.props.authUser.uid)
+        .collection('blacklist')
+        .add({ uid: this.state.user.uid });
+      this.setState({blocked: true})
+    } else {
+      docs.forEach(ds => {
+        ds.ref.delete();
+      });
+      this.setState({blocked: false})
+    }
+  };
+
   render() {
-    const { loading, user } = this.state;
+    const { loading, user, blocked } = this.state;
 
     return (
       <div>
@@ -36,6 +64,12 @@ class UserPage extends Component {
 
         {user && (
           <div>
+            <img style={{height: '200px', width: '200px'}} src={user.avatarUrl ? user.avatarUrl : DEFAULT_AVATAR}/>
+
+            <span>Matches: {user.matchesCount || 0} </span>
+            <span>Loses: {user.losesCount || 0} </span>
+            <span>Wins: {user.winsCount || 0}</span>
+            <br />
             <span>
               <strong>ID:</strong> {user.uid}
             </span>
@@ -45,6 +79,8 @@ class UserPage extends Component {
             <span>
               <strong>Username:</strong> {user.username}
             </span>
+            <input type="button" value={blocked ? 'unblock' : 'block'}
+                   onClick={this.blockUser} />
           </div>
         )}
       </div>
@@ -52,10 +88,14 @@ class UserPage extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  authUser: state.sessionState.authUser
+});
 const condition = authUser => !!authUser;
 
 export default compose(
   withEmailVerification,
   withAuthorization(condition),
+  connect(mapStateToProps),
   withFirebase
 )(UserPage);

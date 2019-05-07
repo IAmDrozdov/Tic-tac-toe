@@ -12,7 +12,7 @@ class ActivityPage extends Component {
     this.state = {
       activities: [],
       activityListener: null,
-      viewedActivities: []
+      viewedActivities: [],
     };
   }
 
@@ -41,9 +41,14 @@ class ActivityPage extends Component {
     this.setState({ activityListener });
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return !nextState.viewedActivities.length;
+
+  }
+
   componentWillUnmount() {
     const batch = this.props.firebase.db.batch();
-    for (let i = 0; i < this.state.viewedActivities.length; i = i + 1) {
+    for (let i = 0; i < this.state.viewedActivities.length; i += 1) {
       const activityRef = this.props.firebase.activity(this.props.authUser.uid)
         .doc(this.state.viewedActivities[i]);
       batch.update(activityRef, { viewed: true });

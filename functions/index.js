@@ -26,22 +26,43 @@ exports.onUserStatusChanged = functions.database
 
 exports.onMatchRemoved = functions.firestore
   .document('matches/{matchId}')
-  .onDelete((change, context) => {
+  .onDelete((snap, context) => {
     const { matchId } = context.params;
     const usersRef = firestore.collection('users');
+    const { win } = snap.data();
     usersRef.where('match', '==', matchId)
       .get()
       .then(snapshot =>
         snapshot.forEach(qds => {
-          qds.ref
-            .update({ match: admin.firestore.FieldValue.delete() });
-          qds.ref
+          const user = qds.ref;
+          const toUpdate = {
+            matchesCount: admin.firestore.FieldValue.increment(1)
+          };
+
+          switch (win) {
+            case user.id:
+              toUpdate.winsCount = admin.firestore.FieldValue.increment(1);
+              break;
+            case 'draw':
+              break;
+            default:
+              toUpdate.losesCount = admin.firestore.FieldValue.increment(1);
+
+          }
+          user
+            .update({
+              ...toUpdate,
+              match: admin.firestore.FieldValue.delete()
+            });
+
+          user
             .collection('activity')
             .where('matchId', '==', matchId)
             .get()
             .then(snapshot2 =>
               snapshot2.forEach(qds2 =>
-                qds2.ref.delete()));
+                qds2.ref.delete())
+            );
         })
       );
   });

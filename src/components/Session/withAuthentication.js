@@ -15,20 +15,41 @@ const withAuthentication = Component => {
     }
 
     componentDidMount() {
-      this.listener = this.props.firebase.onAuthUserListener(
+      this.authListener = this.props.firebase.onAuthUserListener(
         authUser => {
           localStorage.setItem('authUser', JSON.stringify(authUser));
           this.props.onSetAuthUser(authUser);
+          this.matchListener = this.props.firebase.user(authUser.uid)
+            .onSnapshot(doc => {
+              const { match } = doc.data();
+              this.props.onChangeCurrentMatch(match);
+            });
+          this.activityListener = this.props.firebase.activity(authUser.uid)
+            .where('viewed', '==', false)
+            .onSnapshot(qds => qds.docChanges().forEach(change => {
+                const data = change.doc.data();
+                if (change.type === 'added') {
+                  this.props.onAddUnreadActivity(data.id);
+                } else if (change.type === 'modified') {
+                  console.log('  modified', data);
+                } else if (change.type === 'removed') {
+                  this.props.onRemoveUnreadActivity(data.id);
+                }
+              })
+            );
         },
         () => {
           localStorage.removeItem('authUser');
           this.props.onSetAuthUser(null);
         }
       );
+
     }
 
     componentWillUnmount() {
-      this.listener();
+      this.authListener();
+      this.matchListener();
+      this.activityListener();
     }
 
     render() {
@@ -38,7 +59,13 @@ const withAuthentication = Component => {
 
   const mapDispatchToProps = dispatch => ({
     onSetAuthUser: authUser =>
-      dispatch({ type: 'AUTH_USER_SET', authUser })
+      dispatch({ type: 'AUTH_USER_SET', authUser }),
+    onAddUnreadActivity: activity =>
+      dispatch({ type: 'ACTIVITY_UNREAD_ADD', activity }),
+    onRemoveUnreadActivity: activity =>
+      dispatch({ type: 'ACTIVITY_UNREAD_REMOVE', activity }),
+    onChangeCurrentMatch: match =>
+      dispatch({ type: 'CURRENT_MATCH_SET', match })
   });
 
   return compose(

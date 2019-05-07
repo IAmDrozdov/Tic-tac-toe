@@ -36,37 +36,6 @@ class UserList extends Component {
     });
   }
 
-  askMatch = async (user) => {
-    const hisActivityRef = this.props.firebase.user(user.uid)
-      .collection('activity');
-    const myActivityRef = this.props.firebase.user(this.props.authUser.uid)
-      .collection('activity');
-    const snapshot = await hisActivityRef.get();
-    let meIn = false;
-    snapshot.forEach(doc => {
-      if (doc.data().uid ===
-        this.props.authUser.uid) meIn = true;
-    });
-    if (!meIn) {
-      const newActivityRef = myActivityRef.doc();
-      newActivityRef.set({
-        date: new Date(),
-        uid: this.props.authUser.uid,
-        id: newActivityRef.id,
-        message: `Your request to ${user.username} is pending`
-      });
-      const requestRef = hisActivityRef.doc();
-      requestRef.set({
-        date: new Date(),
-        uid: this.props.authUser.uid,
-        name: this.props.authUser.username,
-        type: 'request',
-        id: requestRef.id,
-        bindedActivity: newActivityRef.id
-      });
-    }
-  };
-
   handleSelectChange = (e) => {
     const sorting = e.target.value;
     let usersToDisplay = this.state.users.filter(
@@ -97,7 +66,7 @@ class UserList extends Component {
         </select>
         <ul>
           {usersToDisplay.map(user => (
-            <UserItem user={user} askMatch={this.askMatch} key={user.uid}/>
+            <UserItem user={user} key={user.uid}/>
           ))}
         </ul>
       </div>

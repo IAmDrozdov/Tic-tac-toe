@@ -1,5 +1,6 @@
-export const ZERO = '0';
+export const ZERO = 'O';
 export const CROSS = 'X';
+export const DRAW ='OX';
 export const WIN_COMBINATIONS = [
   [0, 1, 2],
   [3, 4, 5],
