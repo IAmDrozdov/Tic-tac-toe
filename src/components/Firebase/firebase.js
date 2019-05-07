@@ -94,16 +94,21 @@ class Firebase {
 
   public = id => this.db.collection('public').doc(id);
 
-  uploadAvatar = async (id, file) => {
-    const imgRef = this.storageRef.child(id);
+  uploadAvatar = async (uid, file) => {
+    const imgRef = this.storageRef.child(uid);
     await imgRef.put(file, {
       contentType: 'image/jpeg'
     });
     const imgUrl = await imgRef.getDownloadURL();
+    await this.user(uid).update({ avatarUrl: imgUrl });
+    console.log('done')
     return imgUrl;
   };
 
-  getAvatar = id => {
+  removeAvatar = async (uid) => {
+    const imgRef = this.storageRef.child(uid);
+    if (imgRef) imgRef.delete();
+    await this.user(uid).update({ avatarUrl: null });
 
   };
 }

@@ -19,17 +19,16 @@ const SIGN_IN_METHODS = [
   }
 ];
 
-
-
 const AccountPage = ({ authUser }) => (
   <div>
     <h1>Account: {authUser.email}</h1>
-    <img style={{height: '200px', width: '200px'}} src={authUser.avatarUrl ? authUser.avatarUrl : DEFAULT_AVATAR}/>
+    <img style={{ height: '200px', width: '200px' }}
+         src={authUser.avatarUrl ? authUser.avatarUrl : DEFAULT_AVATAR} />
     <Statistics
       loses={authUser.losesCount}
       matches={authUser.matchesCount}
       wins={authUser.winsCount} />
-    <AvatarChangeForm  authUser={authUser}/>
+    <AvatarChangeForm authUser={authUser} />
     <PasswordForgetForm />
     <PasswordChangeForm />
     <LoginManagement authUser={authUser} />
@@ -46,9 +45,15 @@ class AvatarChangeFormBase extends Component {
 
   submit = async (e) => {
     e.preventDefault();
+    const { uid } = this.props.authUser;
     const file = this.file.files[0];
-    const imgUrl = await this.props.firebase.uploadAvatar(this.props.authUser.uid, file);
-    await this.props.firebase.user(this.props.authUser.uid).update({avatarUrl: imgUrl})
+    await this.props.firebase.uploadAvatar(uid, file);
+  };
+
+  removeAvatar = async () => {
+    const { uid } = this.props.authUser;
+
+    await this.props.firebase.removeAvatar(uid);
   };
 
   render() {
@@ -56,6 +61,8 @@ class AvatarChangeFormBase extends Component {
       <div>
         <form onSubmit={this.submit}>
           <input type="file" ref={this.setRef} />
+          <input type="button" value='remove avatar'
+                 onClick={this.removeAvatar} />
           <input type="submit" />
         </form>
       </div>
@@ -253,7 +260,7 @@ class DefaultLoginToggle extends Component {
 
 const LoginManagement = withFirebase(LoginManagementBase);
 
-const AvatarChangeForm = withFirebase(AvatarChangeFormBase)
+const AvatarChangeForm = withFirebase(AvatarChangeFormBase);
 const mapStateToProps = state => ({
   authUser: state.sessionState.authUser
 });
