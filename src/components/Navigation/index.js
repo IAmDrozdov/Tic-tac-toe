@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 import SignOutButton from '../SignOut';
 import * as ROUTES from '../../constants/routes';
+import * as S from './styled';
 
 const Navigation = ({ authUser, unreadActivities, currentMatch }) =>
   authUser ? (
@@ -14,47 +13,74 @@ const Navigation = ({ authUser, unreadActivities, currentMatch }) =>
     <NavigationNonAuth />
   );
 
-const NavigationAuth = ({ user, unreadActivities, currentMatch }) => {
-  return (
+const NavigationAuth = ({ user, unreadActivities, currentMatch }) => (
+  <S.NavBar>
+    <S.AppLabel>XO</S.AppLabel>
     <ul>
       <li>
-        <Link to={ROUTES.LANDING}>Landing</Link>
+        <S.StyledLink to={ROUTES.LANDING}>
+          Landing
+        </S.StyledLink>
       </li>
       <li>
-        <Link to={ROUTES.HOME}>Home</Link>
+        <S.StyledLink to={ROUTES.HOME}>
+          Home
+        </S.StyledLink>
       </li>
       <li>
-        <Link to={ROUTES.ACTIVITY}>Activity {unreadActivities.length > 0 &&
-        `(${unreadActivities.length})`}</Link>
+        <S.StyledLink to={ROUTES.ACTIVITY}>
+          Activity
+          {
+            unreadActivities.length > 0 &&
+            `(${unreadActivities.length})`
+          }
+        </S.StyledLink>
       </li>
-      {currentMatch &&
+      {
+        currentMatch &&
+        <li>
+          <S.StyledLink to={`${ROUTES.MATCH}/${currentMatch}`}>
+            Current match
+          </S.StyledLink>
+        </li>
+      }
       <li>
-        <Link to={`${ROUTES.MATCH}/${currentMatch}`}>Current match</Link>
-      </li>}
-      <li>
-        <Link to={ROUTES.ACCOUNT}>{user.username} {user.online &&
-        '(online)'}</Link>
+        < S.StyledLink to={ROUTES.ACCOUNT}>
+          {user.username}
+          {
+            user.online &&
+            '(online)'
+          }
+        </S.StyledLink>
       </li>
       <li>
         <SignOutButton />
       </li>
     </ul>
-  );
-};
+  </S.NavBar>
+);
 
 const NavigationNonAuth = () => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-    </li>
-
-    <li>
-      <Link to={ROUTES.SIGN_UP}>Sign Up</Link>
-    </li>
-  </ul>
+  <S.NavBar>
+    <S.AppLabel>XO</S.AppLabel>
+    <ul>
+      <li>
+        <S.StyledLink to={ROUTES.LANDING}>
+          Landing
+        </S.StyledLink>
+      </li>
+      <li
+      ><S.StyledLink to={ROUTES.SIGN_IN}>
+        Sign In
+      </S.StyledLink>
+      </li>
+      <li>
+        <S.StyledLink to={ROUTES.SIGN_UP}>
+          Sign Up
+        </S.StyledLink>
+      </li>
+    </ul>
+  </S.NavBar>
 );
 
 const mapStateToProps = state => ({

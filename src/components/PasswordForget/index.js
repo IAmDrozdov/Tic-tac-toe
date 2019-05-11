@@ -1,26 +1,22 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import * as S from './styled';
 
 const PasswordForgetPage = () => (
-  <div>
-    <h1>PasswordForget</h1>
+  <S.ContentToCenter>
     <PasswordForgetForm />
-  </div>
+  </S.ContentToCenter>
 );
-
-const INITIAL_STATE = {
-  email: '',
-  error: null
-};
 
 class PasswordForgetFormBase extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ...INITIAL_STATE };
+    this.state = {
+      email: '',
+      error: null
+    };
   }
 
   onSubmit = event => {
@@ -29,7 +25,10 @@ class PasswordForgetFormBase extends Component {
     this.props.firebase
       .doPasswordReset(email)
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
+        this.setState({
+          email: '',
+          error: null
+        });
       })
       .catch(error => {
         this.setState({ error });
@@ -48,32 +47,27 @@ class PasswordForgetFormBase extends Component {
     const isInvalid = email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
+      <S.Form onSubmit={this.onSubmit}>
+        <S.Header>Reset Password</S.Header>
+        <S.Input
           name="email"
           value={this.state.email}
           onChange={this.onChange}
           type="text"
-          placeholder="Email Address"
+          placeholder="E-Mail address"
         />
-        <button disabled={isInvalid} type="submit">
-          Reset My Password
-        </button>
+        <S.Button disabled={isInvalid} type="submit">
+          Reset
+        </S.Button>
 
-        {error && <p>{error.message}</p>}
-      </form>
+        {error && <S.ErrorText>{error.message}</S.ErrorText>}
+      </S.Form>
     );
   }
 }
-
-const PasswordForgetLink = () => (
-  <p>
-    <Link to={ROUTES.PASSWORD_FORGET}>Forgot Password?</Link>
-  </p>
-);
 
 export default PasswordForgetPage;
 
 const PasswordForgetForm = withFirebase(PasswordForgetFormBase);
 
-export { PasswordForgetForm, PasswordForgetLink };
+export { PasswordForgetForm };

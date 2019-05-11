@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { createGlobalStyle } from 'styled-components';
 
 import Navigation from '../Navigation';
 import LandingPage from '../Landing';
@@ -16,12 +17,24 @@ import { withAuthentication } from '../Session';
 import { UserList, UserPage } from '../Users';
 import MatchPage from '../Match';
 
+const GlobalStyle = createGlobalStyle`
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+  html, body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to bottom, #673D9D, #5154DA);
+    height: 100%;
+  }
+`;
+
 const App = () => (
   <Router>
+    <GlobalStyle />
     <div>
       <Navigation />
-
-      <hr />
 
       <Route exact path={ROUTES.LANDING} component={LandingPage} />
       <Route path={ROUTES.SIGN_UP} component={SignUpPage} />

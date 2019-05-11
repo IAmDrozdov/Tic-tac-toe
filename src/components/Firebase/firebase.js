@@ -101,7 +101,6 @@ class Firebase {
     });
     const imgUrl = await imgRef.getDownloadURL();
     await this.user(uid).update({ avatarUrl: imgUrl });
-    console.log('done')
     return imgUrl;
   };
 

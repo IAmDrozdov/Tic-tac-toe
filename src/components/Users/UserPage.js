@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { DEFAULT_AVATAR } from '../../constants/user';
+import React, { Component } from "react";
+import { compose } from "recompose";
+import { connect } from "react-redux";
+import { DEFAULT_AVATAR } from "../../constants/user";
 
-import { withFirebase } from '../Firebase';
-import { withAuthorization, withEmailVerification } from '../Session';
+import { withFirebase } from "../Firebase";
+import { withAuthorization, withEmailVerification } from "../Session";
 
 class UserPage extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class UserPage extends Component {
     const user = userDoc.data();
     const blackList = await this.props.firebase
       .user(this.props.authUser.uid)
-      .collection('blacklist')
+      .collection("blacklist")
       .get();
     blackList.docs.forEach(qds => {
       if (qds.data().uid === user.uid) this.setState({ blocked: true });
@@ -38,19 +38,19 @@ class UserPage extends Component {
   blockUser = async () => {
     const { empty, docs } = await this.props.firebase.user(
       this.props.authUser.uid)
-      .collection('blacklist')
-      .where('uid', '==', this.state.user.uid)
+      .collection("blacklist")
+      .where("uid", "==", this.state.user.uid)
       .get();
     if (empty) {
       this.props.firebase.user(this.props.authUser.uid)
-        .collection('blacklist')
+        .collection("blacklist")
         .add({ uid: this.state.user.uid });
-      this.setState({blocked: true})
+      this.setState({ blocked: true });
     } else {
       docs.forEach(ds => {
         ds.ref.delete();
       });
-      this.setState({blocked: false})
+      this.setState({ blocked: false });
     }
   };
 
@@ -64,7 +64,9 @@ class UserPage extends Component {
 
         {user && (
           <div>
-            <img style={{height: '200px', width: '200px'}} src={user.avatarUrl ? user.avatarUrl : DEFAULT_AVATAR}/>
+            <img style={{ height: "200px", width: "200px" }}
+                 src={user.avatarUrl ? user.avatarUrl : DEFAULT_AVATAR}
+                 alt="" />
 
             <span>Matches: {user.matchesCount || 0} </span>
             <span>Loses: {user.losesCount || 0} </span>
@@ -79,7 +81,7 @@ class UserPage extends Component {
             <span>
               <strong>Username:</strong> {user.username}
             </span>
-            <input type="button" value={blocked ? 'unblock' : 'block'}
+            <input type="button" value={blocked ? "unblock" : "block"}
                    onClick={this.blockUser} />
           </div>
         )}

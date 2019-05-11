@@ -23,7 +23,9 @@ const AccountPage = ({ authUser }) => (
   <div>
     <h1>Account: {authUser.email}</h1>
     <img style={{ height: '200px', width: '200px' }}
-         src={authUser.avatarUrl ? authUser.avatarUrl : DEFAULT_AVATAR} />
+         src={authUser.avatarUrl ? authUser.avatarUrl : DEFAULT_AVATAR}
+         alt=""
+    />
     <Statistics
       loses={authUser.losesCount}
       matches={authUser.matchesCount}

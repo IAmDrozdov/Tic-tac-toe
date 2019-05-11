@@ -2,26 +2,15 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { SignUpLink } from '../SignUp';
-import { PasswordForgetLink } from '../PasswordForget';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import * as S from './styled';
 
 const SignInPage = () => (
-  <div>
-    <h1>SignIn</h1>
+  <S.ContentToCenter>
     <SignInForm />
-    <SignInGoogle />
-    <PasswordForgetLink />
-    <SignUpLink />
-  </div>
+  </S.ContentToCenter>
 );
-
-const INITIAL_STATE = {
-  email: '',
-  password: '',
-  error: null
-};
 
 const ERROR_CODE_ACCOUNT_EXISTS =
   'auth/account-exists-with-different-credential';
@@ -37,7 +26,11 @@ class SignInFormBase extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ...INITIAL_STATE };
+    this.state = {
+      email: '',
+      password: '',
+      error: null
+    };
   }
 
   onSubmit = event => {
@@ -46,7 +39,11 @@ class SignInFormBase extends Component {
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
+        this.setState({
+          email: '',
+          password: '',
+          error: null
+        });
         this.props.history.push(ROUTES.HOME);
       })
       .catch(error => {
@@ -60,45 +57,7 @@ class SignInFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  render() {
-    const { email, password, error } = this.state;
-
-    const isInvalid = password === '' || email === '';
-
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
-
-        {error && <p>{error.message}</p>}
-      </form>
-    );
-  }
-}
-
-class SignInGoogleBase extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { error: null };
-  }
-
-  onSubmit = event => {
+  onPressGoogle = event => {
     this.props.firebase
       .doSignInWithGoogle()
       .then(socialAuthUser => {
@@ -114,23 +73,72 @@ class SignInGoogleBase extends Component {
       .catch(error => {
         if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
           error.message = ERROR_MSG_ACCOUNT_EXISTS;
+          this.setState({ error });
         }
-
-        this.setState({ error });
       });
-
     event.preventDefault();
   };
 
   render() {
-    const { error } = this.state;
+    const { email, password, error } = this.state;
+
+    const isInvalid = password === '' || email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <button type="submit">Sign In with Google</button>
+      <S.Form onSubmit={this.onSubmit}>
+        <S.Header>Sign In</S.Header>
 
-        {error && <p>{error.message}</p>}
-      </form>
+        <S.Input
+          name="email"
+          value={email}
+          onChange={this.onChange}
+          type="text"
+          placeholder="Email Address"
+        />
+        <S.Input
+          name="password"
+          value={password}
+          onChange={this.onChange}
+          type="password"
+          placeholder="Password"
+        />
+        <S.Paragraph>
+          <S.Span fontSize='20px'>
+            Sign In with&ensp;
+          </S.Span>
+          <S.Span
+            link
+            fontSize='20px'
+            underline
+            onClick={this.onPressGoogle}>
+            Google
+          </S.Span>
+        </S.Paragraph>
+        {error && <S.ErrorText>{error.message}</S.ErrorText>}
+        <S.Button disabled={isInvalid} type="submit">
+          Sign In
+        </S.Button>
+        <S.Paragraph>
+          <S.Span
+            onClick={() => this.props.history.push(ROUTES.PASSWORD_FORGET)}
+            underline
+            link>
+            Forgot Password?
+          </S.Span>
+        </S.Paragraph>
+        <S.Paragraph>
+          <S.Span>
+            Dont have an account?&ensp;
+          </S.Span>
+          <S.Span
+            onClick={() => this.props.history.push(ROUTES.SIGN_UP)}
+            bold
+            link
+          >
+            Sign Up
+          </S.Span>
+        </S.Paragraph>
+      </S.Form>
     );
   }
 }
@@ -140,11 +148,6 @@ const SignInForm = compose(
   withFirebase
 )(SignInFormBase);
 
-const SignInGoogle = compose(
-  withRouter,
-  withFirebase
-)(SignInGoogleBase);
-
 export default SignInPage;
 
-export { SignInForm, SignInGoogle };
+export { SignInForm };
