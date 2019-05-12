@@ -45,6 +45,11 @@ const Button = styled.button`
   :hover {
   cursor: pointer;
   }
+  
+  :active {
+  position: relative;
+      top: 2px;
+}
 `;
 
 const ErrorText = styled.p`

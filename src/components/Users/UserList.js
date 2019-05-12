@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import UserItem from './UserItem';
-import { withFirebase } from '../Firebase';
-import { withAuthorization, withEmailVerification } from '../Session';
+import React, { Component } from "react";
+import { compose } from "recompose";
+import UserItem from "./UserItem";
+import { withFirebase } from "../Firebase";
+import { withAuthorization, withEmailVerification } from "../Session";
+import * as S from "./styled";
 
 class UserList extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class UserList extends Component {
 
     this.state = {
       loading: false,
-      onlineSort: 'all',
+      onlineSort: "all",
       users: [],
       usersToDisplay: []
     };
@@ -41,10 +42,10 @@ class UserList extends Component {
     let usersToDisplay = this.state.users.filter(
       u => u.uid !== this.props.authUser.uid);
     switch (sorting) {
-      case 'online':
+      case "online":
         usersToDisplay = usersToDisplay.filter(u => u.online);
         break;
-      case 'offline':
+      case "offline":
         usersToDisplay = usersToDisplay.filter(u => !u.online);
         break;
       default:
@@ -54,22 +55,28 @@ class UserList extends Component {
   };
 
   render() {
-    const { loading, onlineSort, usersToDisplay } = this.state;
+    const { onlineSort, usersToDisplay, loading } = this.state;
     return (
-      <div>
-        <h2>Users</h2>
-        {loading && <div>Loading users</div>}
-        <select value={onlineSort} onChange={this.handleSelectChange}>
-          <option value="all">all</option>
-          <option value="online">online</option>
-          <option value="offline">offline</option>
-        </select>
-        <ul>
-          {usersToDisplay.map(user => (
-            <UserItem user={user} key={user.uid}/>
-          ))}
-        </ul>
-      </div>
+      <S.PageContainer>
+        <S.FilterBar>
+          <S.Header>Users</S.Header>
+          <S.Filter value={onlineSort} onChange={this.handleSelectChange}>
+            <S.FilterOption value="all">All</S.FilterOption>
+            <S.FilterOption value="online">Online</S.FilterOption>
+            <S.FilterOption value="offline">Offline</S.FilterOption>
+          </S.Filter>
+        </S.FilterBar>
+        <S.UserListContainer>
+          {
+            loading ?
+              null
+              :
+              usersToDisplay.map(user => (
+                  <UserItem user={user} key={user.uid} />
+                ))
+          }
+        </S.UserListContainer>
+      </S.PageContainer>
     );
   }
 }

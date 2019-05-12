@@ -1,24 +1,26 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import * as ROUTES from '../../constants/routes';
+import React from "react";
+import * as ROUTES from "../../constants/routes";
+import * as S from "./styled";
 
 const PublicItem = (props) => (
-  <li>
+  <S.ItemInfoContainer>
     {
       props.match.uid !== props.uid ?
-        <Link
-          to={`${ROUTES.USERS}/${props.match.uid}`}>{props.match.name}</Link>
+        <S.StyledLink
+          to={`${ROUTES.USERS}/${props.match.uid}`}>
+          {props.match.name}
+        </S.StyledLink>
         :
-        'your request'
+        "your request"
     }
 
     {props.match.uid !== props.uid &&
-    <input type="button" value='respond'
-           onClick={() => {
-             return props.respond(props.match);
-           }} />
+    <S.RespondButton
+      onClick={() => props.respond(props.match)}>
+      respond
+    </S.RespondButton>
     }
-  </li>
+  </S.ItemInfoContainer>
 );
 
 export default PublicItem;

@@ -27,14 +27,22 @@ const NavBar = styled.nav`
     margin: 0 40px;
 }
 `;
-const AppLabel = styled.span`
+const AppLabel = styled(StyledLink)`
   font-weight: 600;
   font-size: 48px;
   color: #FFFF;
 `;
 
+const CurrentMatchLink = styled(StyledLink)`
+border-radius: 30px;
+border: 2px solid #FFF;
+font-weight: 500;
+padding: 10px;
+`;
+
 export {
   StyledLink,
   NavBar,
-  AppLabel
+  AppLabel,
+  CurrentMatchLink
 };

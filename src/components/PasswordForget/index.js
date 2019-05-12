@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { withFirebase } from '../Firebase';
 import * as S from './styled';
+import * as ROUTES from "../../constants/routes";
 
 const PasswordForgetPage = () => (
   <S.ContentToCenter>
@@ -35,6 +36,7 @@ class PasswordForgetFormBase extends Component {
       });
 
     event.preventDefault();
+    this.props.history.push(ROUTES.SIGN_IN);
   };
 
   onChange = event => {

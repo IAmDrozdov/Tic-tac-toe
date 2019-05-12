@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { compose } from "recompose";
 import { connect } from "react-redux";
 import { DEFAULT_AVATAR } from "../../constants/user";
+import * as S from "./styled";
 
 import { withFirebase } from "../Firebase";
 import { withAuthorization, withEmailVerification } from "../Session";
@@ -58,34 +59,26 @@ class UserPage extends Component {
     const { loading, user, blocked } = this.state;
 
     return (
-      <div>
-        <h2>User ({this.props.match.params.id})</h2>
-        {loading && <div>Loading user data</div>}
+      user && (
+        <S.Card>
 
-        {user && (
-          <div>
-            <img style={{ height: "200px", width: "200px" }}
-                 src={user.avatarUrl ? user.avatarUrl : DEFAULT_AVATAR}
-                 alt="" />
+          <S.Image avatar
+                   src={user.avatarUrl ? user.avatarUrl : DEFAULT_AVATAR}
+                   alt="" />
+          <S.InfoContainer>
+            <S.TextCard username>{user.username}</S.TextCard>
+            <S.StatisticsContainer>
+              <S.TextCard>Matches: {user.matchesCount || 0} </S.TextCard>
+              <S.TextCard>Loses: {user.losesCount || 0} </S.TextCard>
+              <S.TextCard>Wins: {user.winsCount || 0}</S.TextCard>
+            </S.StatisticsContainer>
+            <S.Button onClick={this.blockUser}>{blocked ? "unblock" : "block"}</S.Button>
+          </S.InfoContainer>
 
-            <span>Matches: {user.matchesCount || 0} </span>
-            <span>Loses: {user.losesCount || 0} </span>
-            <span>Wins: {user.winsCount || 0}</span>
-            <br />
-            <span>
-              <strong>ID:</strong> {user.uid}
-            </span>
-            <span>
-              <strong>E-Mail:</strong> {user.email}
-            </span>
-            <span>
-              <strong>Username:</strong> {user.username}
-            </span>
-            <input type="button" value={blocked ? "unblock" : "block"}
-                   onClick={this.blockUser} />
-          </div>
-        )}
-      </div>
+
+        </S.Card>
+      )
+
     );
   }
 }

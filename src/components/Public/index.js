@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import PublicItem from './PublicItem';
-import { generateMatchId } from '../../utils';
-import { withAuthorization, withEmailVerification } from '../Session';
-import * as ROUTES from '../../constants/routes';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { compose } from "recompose";
+import PublicItem from "./PublicItem";
+import { generateMatchId } from "../../utils";
+import { withAuthorization, withEmailVerification } from "../Session";
+import * as ROUTES from "../../constants/routes";
+import * as S from "./styled";
 
 class PublicPage extends Component {
   constructor(props) {
@@ -16,15 +17,15 @@ class PublicPage extends Component {
   }
 
   componentDidMount() {
-    this.props.firebase.db.collection('public').onSnapshot(snapshot => {
+    this.props.firebase.db.collection("public").onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         const matches = this.state.matches.slice();
         const data = change.doc.data();
         let { myRequest } = this.state;
-        if (change.type === 'added') {
+        if (change.type === "added") {
           matches.push(data);
           if (data.uid === this.props.authUser.uid) myRequest = data.id;
-        } else if (change.type === 'removed') {
+        } else if (change.type === "removed") {
           const idx = matches.map(e => e.id).indexOf(data.id);
           matches.splice(idx, 1);
           if (data.uid === this.props.authUser.uid) myRequest = null;
@@ -35,7 +36,7 @@ class PublicPage extends Component {
   }
 
   publishRequest = () => {
-    const requestRef = this.props.firebase.db.collection('public').doc();
+    const requestRef = this.props.firebase.db.collection("public").doc();
     requestRef.set({
       id: requestRef.id,
       name: this.props.authUser.username,
@@ -53,11 +54,13 @@ class PublicPage extends Component {
     const hisRef = this.props.firebase.user(match.uid);
     const myRef = this.props.firebase.user(this.props.authUser.uid);
     const hisActivityRef = this.props.firebase.user(match.uid)
-      .collection('activity');
-    const hisBlackListWithMe = await hisRef.collection('blacklist').where('uid', '==', this.props.authUser.uid).get();
+      .collection("activity");
+    const hisBlackListWithMe = await hisRef.collection("blacklist")
+      .where("uid", "==", this.props.authUser.uid)
+      .get();
     if (!hisBlackListWithMe.empty) {
-      alert('User blocked you');
-      return
+      alert("User blocked you");
+      return;
     }
     const myDoc = await myRef.get();
     const hisDoc = await hisRef.get();
@@ -67,7 +70,7 @@ class PublicPage extends Component {
 
     if (hisInfo.online && !hisInfo.match) {
       if (myInfo.match) {
-        alert('You are already playing');
+        alert("You are already playing");
       } else {
         const matchId = generateMatchId(myInfo.uid, hisInfo.uid);
         const field = [];
@@ -94,7 +97,7 @@ class PublicPage extends Component {
           date: new Date(),
           uid: myInfo.uid,
           name: myInfo.username,
-          type: 'match',
+          type: "match",
           id: requestRef.id,
           matchId
         });
@@ -104,7 +107,7 @@ class PublicPage extends Component {
         this.props.history.push(`${ROUTES.MATCH}/${matchId}`);
       }
     } else {
-      alert('Enemy is not ready to play');
+      alert("Enemy is not ready to play");
     }
   };
 
@@ -112,24 +115,27 @@ class PublicPage extends Component {
     const { matches, myRequest } = this.state;
     const { authUser } = this.props;
     return (
-      <div>
-        <h1>Public Page</h1>
+      <S.PageContainer>
         {
           myRequest ?
-            <input type="button" value='Delete my request'
-                   onClick={this.deleteRequest} />
+            <S.PublishButton onClick={this.deleteRequest}>
+              Delete my request
+            </S.PublishButton>
             :
-            <input type="button" value='Publish request to play'
-                   onClick={this.publishRequest} />
+            <S.PublishButton onClick={this.publishRequest}>
+              Publish request to play
+            </S.PublishButton>
         }
-        {matches.map(match => (
-            <PublicItem key={match.id}
-                        match={match}
-                        uid={authUser.uid}
-                        respond={this.respond} />
-          )
-        )}
-      </div>
+        <S.ItemsContainer>
+          {matches.map(match => (
+              <PublicItem key={match.id}
+                          match={match}
+                          uid={authUser.uid}
+                          respond={this.respond} />
+            )
+          )}
+        </S.ItemsContainer>
+      </S.PageContainer>
     );
   }
 }

@@ -1,8 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import SignOutButton from '../SignOut';
-import * as ROUTES from '../../constants/routes';
-import * as S from './styled';
+import React from "react";
+import { connect } from "react-redux";
+import SignOutButton from "../SignOut";
+import * as ROUTES from "../../constants/routes";
+import * as S from "./styled";
 
 const Navigation = ({ authUser, unreadActivities, currentMatch }) =>
   authUser ? (
@@ -15,42 +15,34 @@ const Navigation = ({ authUser, unreadActivities, currentMatch }) =>
 
 const NavigationAuth = ({ user, unreadActivities, currentMatch }) => (
   <S.NavBar>
-    <S.AppLabel>XO</S.AppLabel>
+    <S.AppLabel to={ROUTES.LANDING}>XO</S.AppLabel>
     <ul>
-      <li>
-        <S.StyledLink to={ROUTES.LANDING}>
-          Landing
-        </S.StyledLink>
-      </li>
+      {
+        currentMatch &&
+        <li>
+          <S.CurrentMatchLink to={`${ROUTES.MATCH}/${currentMatch}`}>
+            Current match
+          </S.CurrentMatchLink>
+        </li>
+      }
       <li>
         <S.StyledLink to={ROUTES.HOME}>
           Home
         </S.StyledLink>
       </li>
-      <li>
-        <S.StyledLink to={ROUTES.ACTIVITY}>
-          Activity
-          {
-            unreadActivities.length > 0 &&
-            `(${unreadActivities.length})`
-          }
-        </S.StyledLink>
-      </li>
-      {
-        currentMatch &&
-        <li>
-          <S.StyledLink to={`${ROUTES.MATCH}/${currentMatch}`}>
-            Current match
-          </S.StyledLink>
-        </li>
-      }
+      {/*<li>*/}
+        {/*<S.StyledLink to={ROUTES.ACTIVITY}>*/}
+          {/*Activity*/}
+          {/*{*/}
+            {/*unreadActivities.length > 0 &&*/}
+            {/*`(${unreadActivities.length})`*/}
+          {/*}*/}
+        {/*</S.StyledLink>*/}
+      {/*</li>*/}
+
       <li>
         < S.StyledLink to={ROUTES.ACCOUNT}>
           {user.username}
-          {
-            user.online &&
-            '(online)'
-          }
         </S.StyledLink>
       </li>
       <li>
@@ -62,13 +54,8 @@ const NavigationAuth = ({ user, unreadActivities, currentMatch }) => (
 
 const NavigationNonAuth = () => (
   <S.NavBar>
-    <S.AppLabel>XO</S.AppLabel>
+    <S.AppLabel to={ROUTES.LANDING}>XO</S.AppLabel>
     <ul>
-      <li>
-        <S.StyledLink to={ROUTES.LANDING}>
-          Landing
-        </S.StyledLink>
-      </li>
       <li
       ><S.StyledLink to={ROUTES.SIGN_IN}>
         Sign In

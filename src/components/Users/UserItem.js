@@ -1,18 +1,23 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import { DEFAULT_AVATAR } from "../../constants/user";
+import * as S from "./styled";
 
 const UserItem = (props) => (
-  <li>
-    <Link to={`${ROUTES.USERS}/${props.user.uid}`}>
-      <img style={{ height: "100px", width: "100px" }}
-           src={props.user.avatarUrl ? props.user.avatarUrl : DEFAULT_AVATAR}
-           alt="" />
-      <strong>{props.user.username}</strong>
-      <strong>{props.user.online && "(online)"}</strong>
-    </Link>
-  </li>
+  <S.ListItem to={`${ROUTES.USERS}/${props.user.uid}`}>
+
+    <S.ImageContainer>
+      <S.Image style={{ height: "100px", width: "100px" }}
+               src={props.user.avatarUrl ? props.user.avatarUrl : DEFAULT_AVATAR}
+               alt="" >
+      </S.Image>
+      {props.user.online && <S.OnlineBadge />}
+    </S.ImageContainer>
+
+    <S.Text>
+      {props.user.username}
+    </S.Text>
+  </S.ListItem>
 );
 
 export default UserItem;
