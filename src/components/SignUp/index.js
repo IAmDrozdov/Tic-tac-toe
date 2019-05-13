@@ -37,7 +37,6 @@ class SignUpFormBase extends Component {
   }
 
   onSubmit = event => {
-    console.log('dsa')
     const { username, email, passwordOne } = this.state;
 
     this.props.firebase

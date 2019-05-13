@@ -55,7 +55,7 @@ class MatchPage extends Component {
               break;
           }
           if (this.state.deskListener) this.state.deskListener();
-          matchRef.delete();
+          // matchRef.delete();
         }
       }
     }, error => console.log(error));
@@ -103,22 +103,35 @@ class MatchPage extends Component {
       });
   };
 
+  leaveMatch = () => {
+    this.props.firebase.match(this.state.id)
+      .get()
+      .then(doc => {
+        const {userX, userO} = doc.data();
+        const win = this.props.authUser.uid === userX ? userO : userX;
+        doc.ref.update({win})
+        this.props.history.push('/');
+      })
+  };
+
   render() {
     const { verified, field, userX, turn } = this.state;
-    console.log(field);
-    console.log(turn);
     const { authUser } = this.props;
-    console.log(authUser.uid);
 
     return (
       <S.PageContainer>
         <S.InfoContainer>
-          {userX && <S.Text>You are playing <S.Mark>{authUser.uid === userX
-            ? MATCH_CONSTANTS.CROSS
-            : MATCH_CONSTANTS.ZERO}</S.Mark></S.Text>}
-          <S.Text>Current turn is {authUser.uid === turn
-            ? "your"
-            : "enemy"}</S.Text>
+          <div>
+            {userX && <S.Text>You are playing <S.Mark>{authUser.uid === userX
+              ? MATCH_CONSTANTS.CROSS
+              : MATCH_CONSTANTS.ZERO}</S.Mark></S.Text>}
+            <S.Text>
+              Current turn is {authUser.uid === turn
+              ? "your"
+              : "enemy"}
+            </S.Text>
+          </div>
+          <S.LeaveButton onClick={this.leaveMatch}>Leave match</S.LeaveButton>
         </S.InfoContainer>
 
         {field &&

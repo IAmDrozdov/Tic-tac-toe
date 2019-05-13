@@ -31,7 +31,9 @@ const CellButton = styled.button`
 `;
 
 const InfoContainer = styled.div`
-
+display: flex;
+width: 100%;
+justify-content: space-between;
 `;
 
 const Text = styled.p`
@@ -57,6 +59,16 @@ const Row = styled.div`
   flex-direction: row;
 `;
 
+const LeaveButton = styled.button`
+border-radius: 30px;
+border: 2px solid #FFF;
+font-weight: 500;
+padding: 10px;
+font-size: 25px;
+  color: #673D9E;
+
+`;
+
 export {
   Field,
   Cell,
@@ -65,5 +77,6 @@ export {
   Mark,
   PageContainer,
   CellButton,
-  Row
+  Row,
+  LeaveButton
 };

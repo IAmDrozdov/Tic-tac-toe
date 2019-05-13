@@ -30,16 +30,6 @@ const NavigationAuth = ({ user, unreadActivities, currentMatch }) => (
           Home
         </S.StyledLink>
       </li>
-      {/*<li>*/}
-        {/*<S.StyledLink to={ROUTES.ACTIVITY}>*/}
-          {/*Activity*/}
-          {/*{*/}
-            {/*unreadActivities.length > 0 &&*/}
-            {/*`(${unreadActivities.length})`*/}
-          {/*}*/}
-        {/*</S.StyledLink>*/}
-      {/*</li>*/}
-
       <li>
         < S.StyledLink to={ROUTES.ACCOUNT}>
           {user.username}
@@ -77,3 +67,13 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(Navigation);
+
+// {/*<li>*/}
+// {/*<S.StyledLink to={ROUTES.ACTIVITY}>*/}
+// {/*Activity*/}
+// {/*{*/}
+// {/*unreadActivities.length > 0 &&*/}
+// {/*`(${unreadActivities.length})`*/}
+// {/*}*/}
+// {/*</S.StyledLink>*/}
+// {/*</li>*/}
