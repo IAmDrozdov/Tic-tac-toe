@@ -11,7 +11,7 @@ In this project I propose to examine "the social network" for fans of all the fa
 
 ## Installation
 * copy .example.env to .env and fill it with your credentials
-``
+```
 cp .example.env .env
 ```
 * Install dependencies
@@ -28,4 +28,4 @@ npm start
 [Alexander Drozdov](mailto:aleksandr.drozdov.99@gmail.com)
 
 # Version
-0.0.1
+1.0
