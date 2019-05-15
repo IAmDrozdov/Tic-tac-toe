@@ -7,25 +7,19 @@ In this project I propose to examine "the social network" for fans of all the fa
 * ReactJs
 * Redux
 * Firebase
-* Git
-* Websockets
+* Styled Components
 
-## Expected functionality:
-* Tic-tac-toe game
-* Registration with email
-* Public games
-* Private games
-* Personal games history
-* Public win/lose statistic
-
-##  Additional functionality:
-* Choose field size
-* Using avatars
-* Blocking users
+## Installation
+* copy .example.env to .env and fill it with your credentials
+``
+cp .example.env .env
+```
+* Install dependencies
+```
+npm install
+```
 
 ## Using
-
-copy .example.env to .env and fill it with your credentials
 ```
 npm start
 ```

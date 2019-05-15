@@ -8,25 +8,21 @@
 * ReactJs
 * Redux
 * Firebase
-* Git
-* Websockets
+* Styled Components
 
-## Ожидаемый функционал:
-* Tic-tac-toe game
-* Registration with email
-* Public games
-* Private games
-* Personal games history
-* Public win/lose statistic
 
-##  Дополнительный функционал:
-* Choose field size
-* Using avatars
-* Blocking users
+## Установка
+* Скопируйте .example.env to .env и заполните его своими данными для доступа
+```
+cp .example.env .env
+```
+* Установите зависимости
+
+```
+npm install
+```
 
 ## Запуск
-Скопируйте .example.env to .env и заполните его своими данными для доступа
-
 ```
 npm start
 ```
@@ -36,4 +32,4 @@ npm start
 [Александр Дроздов](mailto:aleksandr.drozdov.99@gmail.com)
 
 # Версия
-0.0.1
+1.0
